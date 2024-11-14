@@ -46,27 +46,27 @@ def predict_CO2_emissions_ann(input_data):
     """
     # 加载不同折的模型
     ann_model = load_model(input_dim=input_data.shape[1], model_path='ann_model_state_dict.pth')
-    ann_fold_1 = load_model(input_dim=input_data.shape[1], model_path='ann_model_fold_1.pth')
-    ann_fold_2 = load_model(input_dim=input_data.shape[1], model_path='ann_model_fold_2.pth')
-    ann_fold_3 = load_model(input_dim=input_data.shape[1], model_path='ann_model_fold_3.pth')
-    ann_fold_4 = load_model(input_dim=input_data.shape[1], model_path='ann_model_fold_4.pth')
+    # ann_fold_1 = load_model(input_dim=input_data.shape[1], model_path='ann_model_fold_1.pth')
+    # ann_fold_2 = load_model(input_dim=input_data.shape[1], model_path='ann_model_fold_2.pth')
+    # ann_fold_3 = load_model(input_dim=input_data.shape[1], model_path='ann_model_fold_3.pth')
+    # ann_fold_4 = load_model(input_dim=input_data.shape[1], model_path='ann_model_fold_4.pth')
     # ann_fold_5 = load_model(input_dim=input_data.shape[1], model_path='ann_model_fold_5.pth')
     
     # 进行预测
     with torch.no_grad():
         prediction = ann_model(input_data)
-        prediction_fold_1 = ann_fold_1(input_data)
-        prediction_fold_2 = ann_fold_2(input_data)
-        prediction_fold_3 = ann_fold_3(input_data)
-        prediction_fold_4 = ann_fold_4(input_data)
+        # prediction_fold_1 = ann_fold_1(input_data)
+        # prediction_fold_2 = ann_fold_2(input_data)
+        # prediction_fold_3 = ann_fold_3(input_data)
+        # prediction_fold_4 = ann_fold_4(input_data)
         # prediction_fold_5 = ann_fold_5(input_data)
         
         return [
-            prediction.item()/10000,
-            prediction_fold_1.item()/10000,
-            prediction_fold_2.item()/10000,
-            prediction_fold_3.item()/10000,
-            prediction_fold_4.item()/10000
+            prediction.item()/10000
+            # ,prediction_fold_1.item()/10000,
+            # prediction_fold_2.item()/10000,
+            # prediction_fold_3.item()/10000,
+            # prediction_fold_4.item()/10000
             # prediction_fold_5.item()
         ]
 

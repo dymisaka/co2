@@ -45,17 +45,23 @@ def predict_CO2_emissions_transformer(input_data):
     """
     # 加载模型
     transformer_regressor_model = load_model(input_dim=input_data.shape[1],model_path='transformer_regressor_model.pth')
-    transformer_regressor_fold_1 =load_model(input_dim=input_data.shape[1],model_path='transformer_regressor_fold_1.pth')
-    transformer_regressor_fold_2 =load_model(input_dim=input_data.shape[1],model_path='transformer_regressor_fold_2.pth')
-    transformer_regressor_fold_3 =load_model(input_dim=input_data.shape[1],model_path='transformer_regressor_fold_3.pth')
-    transformer_regressor_fold_4 =load_model(input_dim=input_data.shape[1],model_path='transformer_regressor_fold_4.pth')
-    transformer_regressor_fold_5 =load_model(input_dim=input_data.shape[1],model_path='transformer_regressor_fold_5.pth')
+    # transformer_regressor_fold_1 =load_model(input_dim=input_data.shape[1],model_path='transformer_regressor_fold_1.pth')
+    # transformer_regressor_fold_2 =load_model(input_dim=input_data.shape[1],model_path='transformer_regressor_fold_2.pth')
+    # transformer_regressor_fold_3 =load_model(input_dim=input_data.shape[1],model_path='transformer_regressor_fold_3.pth')
+    # transformer_regressor_fold_4 =load_model(input_dim=input_data.shape[1],model_path='transformer_regressor_fold_4.pth')
+    # transformer_regressor_fold_5 =load_model(input_dim=input_data.shape[1],model_path='transformer_regressor_fold_5.pth')
     # 进行预测
     with torch.no_grad():
         prediction = transformer_regressor_model(input_data)
-        prediction_fold_1 = transformer_regressor_fold_1(input_data)
-        prediction_fold_2 = transformer_regressor_fold_2(input_data)
-        prediction_fold_3 = transformer_regressor_fold_3(input_data)
-        prediction_fold_4 = transformer_regressor_fold_4(input_data)
-        prediction_fold_5 = transformer_regressor_fold_5(input_data)
-        return [prediction.item(),prediction_fold_1.item(),prediction_fold_2.item(),prediction_fold_3.item(),prediction_fold_4.item(),prediction_fold_5.item()]
+        # prediction_fold_1 = transformer_regressor_fold_1(input_data)
+        # prediction_fold_2 = transformer_regressor_fold_2(input_data)
+        # prediction_fold_3 = transformer_regressor_fold_3(input_data)
+        # prediction_fold_4 = transformer_regressor_fold_4(input_data)
+        # prediction_fold_5 = transformer_regressor_fold_5(input_data)
+        return [prediction.item()
+                # ,prediction_fold_1.item()
+                # ,prediction_fold_2.item()
+                # ,prediction_fold_3.item()
+                # ,prediction_fold_4.item()
+                # ,prediction_fold_5.item()
+                ]
