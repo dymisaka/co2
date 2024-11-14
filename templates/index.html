@@ -1,0 +1,218 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CO₂ Emissions Prediction</title>
+    <style>
+        body {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        form {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .results-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .model-results {
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        .prediction-item {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: white;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .error {
+            color: red;
+            padding: 10px;
+            background-color: #ffebee;
+            border-radius: 4px;
+        }
+        h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <h1>CO₂ Emissions Prediction</h1>
+    <form id="predictionForm">
+        <input type="number" id="length" placeholder="Enter Length" required step="any">
+        <input type="number" id="breadth" placeholder="Enter Breadth" required step="any">
+        <input type="number" id="draught" placeholder="Enter Draught" required step="any">
+        <input type="number" id="gross_tonnage" placeholder="Enter Gross Tonnage" required step="any">
+        <input type="number" id="deadweight" placeholder="Enter Deadweight" required step="any">
+        <input type="number" id="summer_deadweight" placeholder="Enter Summer Deadweight" required step="any">
+        <input type="number" id="annual_time" placeholder="Enter Annual Time at Sea" required step="any">
+        <input type="number" id="avg_speed" placeholder="Enter Avg Speed" required step="any">
+        <button type="submit">Predict</button>
+    </form>
+
+    <h2>Prediction Results:</h2>
+    <div class="results-container">
+        <div class="model-results">
+            <h3>Transformer Model Predictions</h3>
+            <div id="transformerResult">Waiting for prediction...</div>
+        </div>
+        <div class="model-results">
+            <h3>ANN Model Predictions</h3>
+            <div id="annResult">Waiting for prediction...</div>
+        </div>
+        <div class="model-results">
+            <h3>GCN Model Predictions</h3>
+            <div id="gcnResult">Waiting for prediction...</div>
+        </div>
+        <div class="model-results">
+            <h3>MLP Model Predictions</h3>
+            <div id="mlpResult">Waiting for prediction...</div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("predictionForm").onsubmit = async function (event) {
+            event.preventDefault();
+            
+            const transformerResult = document.getElementById("transformerResult");
+            const annResult = document.getElementById("annResult");
+            transformerResult.innerHTML = "Computing prediction...";
+            annResult.innerHTML = "Computing prediction...";
+
+            try {
+                const data = {
+                    length: parseFloat(document.getElementById("length").value),
+                    breadth: parseFloat(document.getElementById("breadth").value),
+                    draught: parseFloat(document.getElementById("draught").value),
+                    gross_tonnage: parseFloat(document.getElementById("gross_tonnage").value),
+                    deadweight: parseFloat(document.getElementById("deadweight").value),
+                    summer_deadweight: parseFloat(document.getElementById("summer_deadweight").value),
+                    "Annual Time spent at sea [hours]": parseFloat(document.getElementById("annual_time").value),
+                    avg_speed: parseFloat(document.getElementById("avg_speed").value)
+                };
+
+                console.log("Sending data:", data);
+
+                const response = await fetch("/predict", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                console.log("Received result:", result);
+
+                // 显示 Transformer 结果
+                if (result.transformer_predictions) {
+                    const transformerNames = [
+                        "Base Model",
+                        "Fold 1",
+                        "Fold 2",
+                        "Fold 3",
+                        "Fold 4",
+                        "Fold 5"
+                    ];
+
+                    let transformerHTML = "";
+                    result.transformer_predictions.forEach((pred, index) => {
+                        transformerHTML += `
+                            <div class="prediction-item">
+                                <strong>${transformerNames[index]}:</strong> 
+                                ${pred.toFixed(2)} CO₂ emissions
+                            </div>`;
+                    });
+                    transformerResult.innerHTML = transformerHTML;
+                }
+
+                // 显示 ANN 结果
+                if (result.ann_predictions) {
+                    const annNames = [
+                        "Base Model",
+                        "Fold 1",
+                        "Fold 2",
+                        "Fold 3",
+                        "Fold 4"
+                    ];
+
+                    let annHTML = "";
+                    result.ann_predictions.forEach((pred, index) => {
+                        annHTML += `
+                            <div class="prediction-item">
+                                <strong>${annNames[index]}:</strong> 
+                                ${pred.toFixed(2)} CO₂ emissions
+                            </div>`;
+                    });
+                    annResult.innerHTML = annHTML;
+                }
+                // 显示 GCN 结果
+                if (result.gcn_predictions) {
+                    const gcnNames = ["Base Model"];
+                    let gcnHTML = "";
+                    result.gcn_predictions.forEach((pred, index) => {
+                        gcnHTML += `
+                            <div class="prediction-item">
+                                <strong>${gcnNames[index]}:</strong> 
+                                ${pred.toFixed(2)} CO₂ emissions
+                            </div>`;
+                    });
+                    document.getElementById("gcnResult").innerHTML = gcnHTML;
+                }
+                // 显示 MLP 结果
+                if (result.mlp_predictions) {
+                    const mlpNames = ["Base Model"];
+                    let mlpHTML = "";
+                    result.mlp_predictions.forEach((pred, index) => {
+                        mlpHTML += `
+                            <div class="prediction-item">
+                                <strong>${mlpNames[index]}:</strong> 
+                                ${pred.toFixed(2)} CO₂ emissions
+                            </div>`;
+                    });
+                    document.getElementById("mlpResult").innerHTML = mlpHTML;
+                }
+
+            } catch (error) {
+                console.error("Error:", error);
+                const errorMessage = `
+                    <div class="error">
+                        Error: ${error.message}. Please try again.
+                    </div>`;
+                transformerResult.innerHTML = errorMessage;
+                annResult.innerHTML = errorMessage;
+            }
+        };
+    </script>
+</body>
+</html>
