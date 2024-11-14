@@ -30,7 +30,7 @@ def load_model(input_dim, model_path='ann_model_full.pth'):
         ANNRegressor: 加载好的 ANN 模型。
     """
     model = ANNRegressor(input_dim=input_dim)
-    model.load_state_dict(torch.load(model_path))  # 加载模型权重
+    model.load_state_dict(torch.load(model_path,weights_only=True))  # 加载模型权重
     model.eval()
     return model
 

@@ -1,12 +1,13 @@
 import torch
 import torch.nn as nn
+from data import preprocess_input  
 
 # 定义 Transformer 模型类
 class TransformerRegressor(nn.Module):
     def __init__(self, input_dim, model_dim=128, num_heads=2, num_layers=1, output_dim=1):
         super(TransformerRegressor, self).__init__()
         self.input_emb = nn.Linear(input_dim, model_dim)
-        encoder_layer = nn.TransformerEncoderLayer(d_model=model_dim, nhead=num_heads)
+        encoder_layer = nn.TransformerEncoderLayer(d_model=model_dim, nhead=num_heads,batch_first=True)
         self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
         self.output_layer = nn.Linear(model_dim, output_dim)
 
@@ -29,7 +30,8 @@ def load_model(input_dim,model_path='transformer_regressor_model.pth'):
         TransformerRegressor: 加载好的模型。
     """
     model = TransformerRegressor(input_dim=input_dim)
-    model.load_state_dict(torch.load(model_path))
+    # model.load_state_dict(torch.load(model_path,))
+    model.load_state_dict(torch.load(model_path,weights_only=True,map_location=torch.device('cpu')))
     model.eval()
     return model
 
@@ -65,3 +67,11 @@ def predict_CO2_emissions_transformer(input_data):
                 # ,prediction_fold_4.item()
                 # ,prediction_fold_5.item()
                 ]
+    
+if __name__ == "__main__":
+    # 预处理输入数据
+    X_scaled = preprocess_input([189, 32, 8, 32839, 57970, 57970, 1241, 13])
+        
+    # 调用 ANN 模型的预测函数
+    prediction_value_list = predict_CO2_emissions_transformer(X_scaled)
+    print(f"predicted_CO2_emissions: {prediction_value_list}")
